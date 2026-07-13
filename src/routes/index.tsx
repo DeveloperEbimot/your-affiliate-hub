@@ -56,14 +56,15 @@ function Home() {
       <section className="py-12 sm:py-16 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
           <Sparkles className="h-3 w-3 text-accent" />
-          Hand-picked Amazon finds
+          Curated collection
         </div>
         <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">
           Only the good stuff.
         </h1>
         <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-          Curated products across categories — click through to Amazon to buy.
+          Browse our hand-picked products across every category.
         </p>
+
 
         <div className="mt-8 mx-auto max-w-lg">
           <div className="relative">
