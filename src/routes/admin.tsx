@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, X, Upload } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Upload, ChevronUp, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
@@ -15,6 +15,13 @@ type Product = {
   amazon_url: string;
   category_id: string | null;
   featured: boolean;
+};
+
+type ProductImage = {
+  id: string;
+  product_id: string;
+  image_url: string;
+  display_order: number;
 };
 
 const emptyProduct = {
@@ -34,7 +41,7 @@ function AdminPage() {
   const [form, setForm] = useState<typeof emptyProduct>(emptyProduct);
   const [showForm, setShowForm] = useState(false);
   const [newCategory, setNewCategory] = useState("");
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [productImages, setProductImages] = useState<ProductImage[]>([]);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -52,6 +59,15 @@ function AdminPage() {
 
   useEffect(() => { if (isAdmin) load(); }, [isAdmin]);
 
+  const loadProductImages = async (productId: string) => {
+    const { data } = await supabase
+      .from("product_images")
+      .select("*")
+      .eq("product_id", productId)
+      .order("display_order", { ascending: true });
+    setProductImages(data ?? []);
+  };
+
   if (loading) return <div className="p-8 text-center text-muted-foreground">Loading...</div>;
   if (!user) return null;
   if (!isAdmin) return <div className="p-8 text-center text-muted-foreground">You don't have admin access.</div>;
@@ -67,51 +83,53 @@ function AdminPage() {
       category_id: p.category_id ?? "",
       featured: p.featured,
     });
-    setImagePreview(p.image_url);
+    loadProductImages(p.id);
     setShowForm(true);
   };
 
-  const resetForm = () => { setEditing(null); setForm(emptyProduct); setImagePreview(null); setShowForm(false); };
+  const resetForm = () => { setEditing(null); setForm(emptyProduct); setProductImages([]); setShowForm(false); };
 
   const handleImageUpload = async (file: File) => {
-    if (!file) return;
+    if (!file || !editing) return;
 
     setUploading(true);
     try {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         toast.error("Please select an image file");
         setUploading(false);
         return;
       }
 
-      // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         toast.error("Image must be less than 5MB");
         setUploading(false);
         return;
       }
 
-      // Create unique filename
       const filename = `${Date.now()}_${file.name}`;
       const filepath = `product-images/${filename}`;
 
-      // Upload to Supabase Storage
       const { data, error: uploadError } = await supabase.storage
         .from("product_images")
         .upload(filepath, file, { upsert: false });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from("product_images")
         .getPublicUrl(filepath);
 
       const publicUrl = urlData.publicUrl;
-      setForm({ ...form, image_url: publicUrl });
-      setImagePreview(publicUrl);
-      toast.success("Image uploaded successfully");
+      const maxOrder = productImages.length > 0 ? Math.max(...productImages.map(img => img.display_order)) : -1;
+
+      const { error: insertError } = await supabase
+        .from("product_images")
+        .insert({ product_id: editing.id, image_url: publicUrl, display_order: maxOrder + 1 });
+
+      if (insertError) throw insertError;
+
+      await loadProductImages(editing.id);
+      toast.success("Image added successfully");
     } catch (error: any) {
       toast.error(error.message || "Failed to upload image");
     } finally {
@@ -119,12 +137,38 @@ function AdminPage() {
     }
   };
 
+  const removeImage = async (imageId: string) => {
+    const { error } = await supabase.from("product_images").delete().eq("id", imageId);
+    if (error) return toast.error(error.message);
+    await loadProductImages(editing!.id);
+    toast.success("Image removed");
+  };
+
+  const moveImage = async (imageId: string, direction: "up" | "down") => {
+    const image = productImages.find(img => img.id === imageId);
+    if (!image) return;
+
+    const targetOrder = direction === "up" ? image.display_order - 1 : image.display_order + 1;
+    const otherImage = productImages.find(img => img.display_order === targetOrder);
+
+    if (!otherImage) return;
+
+    await Promise.all([
+      supabase.from("product_images").update({ display_order: targetOrder }).eq("id", imageId),
+      supabase.from("product_images").update({ display_order: image.display_order }).eq("id", otherImage.id),
+    ]);
+
+    await loadProductImages(editing!.id);
+  };
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
+    const mainImage = productImages.length > 0 ? productImages[0].image_url : form.image_url;
+    
     const payload = {
       name: form.name,
       description: form.description || null,
-      image_url: form.image_url || null,
+      image_url: mainImage || null,
       price: form.price || null,
       amazon_url: form.amazon_url,
       category_id: form.category_id || null,
@@ -226,37 +270,60 @@ function AdminPage() {
                   onChange={(e) => setForm({ ...form, amazon_url: e.target.value })} className={input} />
               </Field>
 
-              <Field label="Product Image">
-                <div className="space-y-2">
-                  {imagePreview && (
-                    <div className="relative w-full h-32 rounded-lg overflow-hidden bg-muted">
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => { setForm({ ...form, image_url: "" }); setImagePreview(null); }}
-                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground p-1 rounded"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  )}
-                  <label className="flex items-center justify-center gap-2 rounded-md border-2 border-dashed border-input bg-muted/50 px-4 py-6 cursor-pointer hover:bg-muted transition">
-                    <Upload className="h-4 w-4" />
-                    <span className="text-sm text-muted-foreground">Click to upload image</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleImageUpload(file);
-                      }}
-                      disabled={uploading}
-                      className="hidden"
-                    />
-                  </label>
-                  {uploading && <p className="text-xs text-muted-foreground">Uploading...</p>}
-                </div>
-              </Field>
+              {editing && (
+                <Field label="Product Images">
+                  <div className="space-y-2">
+                    {productImages.length > 0 && (
+                      <div className="space-y-2 mb-4">
+                        {productImages.map((img, idx) => (
+                          <div key={img.id} className="flex items-center gap-2 rounded-lg border border-border p-2">
+                            <img src={img.image_url} alt="" className="h-12 w-12 rounded object-cover" />
+                            <div className="flex-1 text-sm text-muted-foreground truncate">Image {idx + 1}</div>
+                            <button
+                              type="button"
+                              onClick={() => moveImage(img.id, "up")}
+                              disabled={idx === 0}
+                              className="p-1 hover:bg-muted disabled:opacity-50"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveImage(img.id, "down")}
+                              disabled={idx === productImages.length - 1}
+                              className="p-1 hover:bg-muted disabled:opacity-50"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeImage(img.id)}
+                              className="p-1 text-destructive hover:bg-muted"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <label className="flex items-center justify-center gap-2 rounded-md border-2 border-dashed border-input bg-muted/50 px-4 py-6 cursor-pointer hover:bg-muted transition">
+                      <Upload className="h-4 w-4" />
+                      <span className="text-sm text-muted-foreground">Click to add more images</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleImageUpload(file);
+                        }}
+                        disabled={uploading}
+                        className="hidden"
+                      />
+                    </label>
+                    {uploading && <p className="text-xs text-muted-foreground">Uploading...</p>}
+                  </div>
+                </Field>
+              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Price">
