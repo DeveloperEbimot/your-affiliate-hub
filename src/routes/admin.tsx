@@ -15,6 +15,12 @@ type Product = {
   amazon_url: string;
   category_id: string | null;
   featured: boolean;
+  listing_type: string | null;
+  location: string | null;
+  beds: number | null;
+  rooms: number | null;
+  bathrooms: number | null;
+  amenities: string[] | null;
 };
 
 type ProductImage = {
@@ -26,7 +32,9 @@ type ProductImage = {
 
 const emptyProduct = {
   name: "", description: "", image_url: "", price: "", amazon_url: "", category_id: "", featured: false,
+  listing_type: "hotel", location: "", beds: "", rooms: "", bathrooms: "", amenities: "",
 };
+
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
