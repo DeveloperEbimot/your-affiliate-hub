@@ -34,7 +34,7 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.5rem;
   --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --background: oklch(1 0 0);
@@ -45,26 +45,26 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.19 0.04 265);
 
-  /* Slate-900 as primary */
-  --primary: oklch(0.21 0.04 265);
+  /* Booking.com deep blue #003580 */
+  --primary: oklch(0.35 0.16 260);
   --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.97 0.005 265);
-  --secondary-foreground: oklch(0.21 0.04 265);
+  --secondary: oklch(0.97 0.01 250);
+  --secondary-foreground: oklch(0.35 0.16 260);
 
-  --muted: oklch(0.97 0.005 265);
-  --muted-foreground: oklch(0.55 0.03 260);
+  --muted: oklch(0.97 0.01 250);
+  --muted-foreground: oklch(0.5 0.03 260);
 
-  /* Amber accent #f59e0b */
-  --accent: oklch(0.79 0.17 70);
-  --accent-foreground: oklch(0.19 0.04 265);
+  /* Booking.com yellow #febb02 */
+  --accent: oklch(0.85 0.17 90);
+  --accent-foreground: oklch(0.25 0.04 265);
 
   --destructive: oklch(0.58 0.24 27);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.92 0.01 260);
-  --input: oklch(0.92 0.01 260);
-  --ring: oklch(0.79 0.17 70);
+  --border: oklch(0.92 0.01 250);
+  --input: oklch(0.92 0.01 250);
+  --ring: oklch(0.55 0.17 245);
 }
 
 .dark {
@@ -74,20 +74,21 @@
   --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.21 0.04 265);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.79 0.17 70);
-  --primary-foreground: oklch(0.19 0.04 265);
+  --primary: oklch(0.55 0.17 245);
+  --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.28 0.04 260);
   --secondary-foreground: oklch(0.98 0 0);
   --muted: oklch(0.28 0.04 260);
   --muted-foreground: oklch(0.7 0.04 260);
-  --accent: oklch(0.79 0.17 70);
-  --accent-foreground: oklch(0.19 0.04 265);
+  --accent: oklch(0.85 0.17 90);
+  --accent-foreground: oklch(0.25 0.04 265);
   --destructive: oklch(0.7 0.19 22);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.79 0.17 70);
+  --ring: oklch(0.55 0.17 245);
 }
+
 
 @layer base {
   * { border-color: var(--color-border); }

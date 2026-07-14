@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
+import { Plane } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -53,16 +54,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PickWise — Shop Curated Products" },
-      { name: "description", content: "Discover a curated collection of quality products across electronics, home, fashion and more." },
-      { property: "og:title", content: "PickWise — Shop Curated Products" },
-      { property: "og:description", content: "Discover a curated collection of quality products across electronics, home, fashion and more." },
+      { title: "Travel Smart — Hotels, Flights & Tours" },
+      { name: "description", content: "Find and book hotels, flights, tours and activities at great prices. Curated travel deals in one place." },
+      { property: "og:title", content: "Travel Smart — Hotels, Flights & Tours" },
+      { property: "og:description", content: "Find and book hotels, flights, tours and activities at great prices." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "PickWise — Shop Curated Products" },
-      { name: "twitter:description", content: "Discover a curated collection of quality products across electronics, home, fashion and more." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0c28279c-958c-4274-b450-0cc32b3c8457/id-preview-252093f2--227220ae-8f04-4096-ba73-b9f10d10c453.lovable.app-1783943060864.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0c28279c-958c-4274-b450-0cc32b3c8457/id-preview-252093f2--227220ae-8f04-4096-ba73-b9f10d10c453.lovable.app-1783943060864.png" },
+      { name: "twitter:title", content: "Travel Smart — Hotels, Flights & Tours" },
+      { name: "twitter:description", content: "Find and book hotels, flights, tours and activities at great prices." },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -93,20 +92,22 @@ function RootShell({ children }: { children: ReactNode }) {
 function Header() {
   const { isAdmin } = useAuth();
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <header className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-sm">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">P</span>
-          <span className="text-lg font-bold tracking-tight">PickWise</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-accent-foreground">
+            <Plane className="h-4 w-4" />
+          </span>
+          <span className="text-xl font-bold tracking-tight">Travel Smart</span>
         </Link>
         <nav className="flex items-center gap-3 text-sm">
-          <Link to="/" className="text-muted-foreground hover:text-foreground [&.active]:text-foreground">Shop</Link>
+          <Link to="/" className="opacity-90 hover:opacity-100 [&.active]:font-semibold">Browse</Link>
           {isAdmin && (
             <>
-              <Link to="/admin" className="text-muted-foreground hover:text-foreground [&.active]:text-foreground">Admin</Link>
+              <Link to="/admin" className="opacity-90 hover:opacity-100 [&.active]:font-semibold">Admin</Link>
               <button
                 onClick={() => supabase.auth.signOut()}
-                className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                className="rounded-md border border-primary-foreground/30 px-3 py-1.5 text-xs font-medium hover:bg-primary-foreground/10"
               >
                 Sign out
               </button>
@@ -122,19 +123,19 @@ function DisclaimerModal() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!sessionStorage.getItem("pw_notice_seen")) setOpen(true);
+    if (!sessionStorage.getItem("ts_notice_seen")) setOpen(true);
   }, []);
   if (!open) return null;
   const dismiss = () => {
-    sessionStorage.setItem("pw_notice_seen", "1");
+    sessionStorage.setItem("ts_notice_seen", "1");
     setOpen(false);
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl">
-        <h2 className="text-lg font-bold">Heads up before you browse</h2>
+        <h2 className="text-lg font-bold">Before you book</h2>
         <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-          No transactions take place on this site. When you click <span className="font-semibold text-foreground">Buy Now</span>, you'll be taken to a trusted external store (such as Amazon) where your purchase is processed securely.
+          No transactions take place on this site. When you click <span className="font-semibold text-foreground">Book Now</span>, you'll be taken to a trusted booking partner (such as Booking.com, Agoda, Kiwi or GetYourGuide) where your reservation is completed securely.
         </p>
         <button
           onClick={dismiss}
@@ -155,7 +156,7 @@ function RootComponent() {
         <Header />
         <Outlet />
         <footer className="mt-16 border-t border-border py-8 text-center text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} PickWise. Purchases are completed on external retailer sites.</p>
+          <p>© {new Date().getFullYear()} Travel Smart. Bookings are completed on partner sites.</p>
         </footer>
       </div>
       <DisclaimerModal />
@@ -163,4 +164,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-
