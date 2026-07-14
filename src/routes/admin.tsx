@@ -90,10 +90,17 @@ function AdminPage() {
       amazon_url: p.amazon_url,
       category_id: p.category_id ?? "",
       featured: p.featured,
+      listing_type: p.listing_type ?? "hotel",
+      location: p.location ?? "",
+      beds: p.beds != null ? String(p.beds) : "",
+      rooms: p.rooms != null ? String(p.rooms) : "",
+      bathrooms: p.bathrooms != null ? String(p.bathrooms) : "",
+      amenities: (p.amenities ?? []).join(", "),
     });
     loadProductImages(p.id);
     setShowForm(true);
   };
+
 
   const resetForm = () => { setEditing(null); setForm(emptyProduct); setProductImages([]); setShowForm(false); };
 
