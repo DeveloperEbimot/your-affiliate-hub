@@ -19,6 +19,25 @@ type Product = {
 
 export const Route = createFileRoute("/")({
   component: Home,
+  head: () => ({
+    meta: [
+      { title: "Travel Smart — Hotels, Flights & Tours" },
+      { name: "description", content: "Search hotels, flights, tours and activities at great prices. Curated travel deals in one place." },
+      { property: "og:title", content: "Travel Smart — Hotels, Flights & Tours" },
+      { property: "og:description", content: "Search hotels, flights, tours and activities at great prices. Curated travel deals in one place." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://travelersmart.lovable.app" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://travelersmart.lovable.app" },
+    ],
+    scripts: [
+      {
+        type: "text/javascript",
+        children: `(function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A7499928-0fe7-4acf-9187-e65ef668c8631.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');`,
+      },
+    ],
+  }),
 });
 
 function Home() {
