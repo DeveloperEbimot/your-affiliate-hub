@@ -69,11 +69,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
+      { rel: "preconnect", href: "https://fjvptgzdioxyvzolqwna.supabase.co" },
+      { rel: "preconnect", href: "https://tpwgts.com" },
+      { rel: "preconnect", href: "https://tp-em.com" },
+      { rel: "dns-prefetch", href: "https://utt.impactcdn.com" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" },
     ],
     scripts: [
       {
-        children: `(function(){var s=document.createElement("script");s.async=1;s.src='https://tp-em.com/NTUwNTcz.js?t=550573';document.head.appendChild(s);})();`,
+        children: `(function(){var s=document.createElement("script");s.async=1;s.defer=1;s.src='https://tp-em.com/NTUwNTcz.js?t=550573';setTimeout(function(){document.head.appendChild(s);},1200);})();`,
       },
     ],
   }),

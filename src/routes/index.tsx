@@ -3,19 +3,39 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, MapPin, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-function TpWidget({ src }: { src: string }) {
+function TpWidget({ src, minHeight = 300 }: { src: string; minHeight?: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!ref.current) return;
+    const el = ref.current;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setVisible(true);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!visible || !ref.current) return;
     ref.current.innerHTML = "";
     const s = document.createElement("script");
     s.async = true;
     s.charset = "utf-8";
     s.src = src;
     ref.current.appendChild(s);
-  }, [src]);
-  return <div ref={ref} className="tp-widget w-full overflow-hidden" />;
+  }, [visible, src]);
+  return <div ref={ref} className="tp-widget w-full overflow-hidden" style={{ minHeight }} />;
 }
+
 
 type Category = { id: string; name: string; slug: string };
 type Product = {
@@ -48,7 +68,7 @@ export const Route = createFileRoute("/")({
     scripts: [
       {
         type: "text/javascript",
-        children: `(function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A7499928-0fe7-4acf-9187-e65ef668c8631.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');`,
+        children: `setTimeout(function(){(function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A7499928-0fe7-4acf-9187-e65ef668c8631.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');},1500);`,
       },
     ],
   }),
@@ -117,7 +137,7 @@ function Home() {
 
         {/* Flight search form */}
         <section className="mt-6">
-          <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%2332a8dd&color_icons=%2332a8dd&dark=%23262626&light=%23ffffff&secondary=%233FABDB&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=0&plain=false&promo_id=7879&campaign_id=100" />
+          <TpWidget minHeight={420} src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&show_hotels=true&powered_by=false&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%2332a8dd&color_icons=%2332a8dd&dark=%23262626&light=%23ffffff&secondary=%233FABDB&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=0&plain=false&promo_id=7879&campaign_id=100" />
         </section>
 
         {/* Explore prices on the map — compact, corner card like booking.com */}
@@ -129,7 +149,7 @@ function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2 rounded-xl overflow-hidden border border-border bg-card shadow-[var(--shadow-card)]">
               <div className="h-[320px] sm:h-[380px]">
-                <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&lat=51.5073509&lng=-0.1277583&powered_by=true&search_host=www.aviasales.com%2Fsearch&locale=en&origin=LON&value_min=0&value_max=1000000&round_trip=true&only_direct=false&radius=1&draggable=true&disable_zoom=false&show_logo=false&scrollwheel=false&primary=%233FABDB&secondary=%233FABDB&light=%23ffffff&width=800&height=380&zoom=3&promo_id=4054&campaign_id=100" />
+                <TpWidget minHeight={380} src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&lat=51.5073509&lng=-0.1277583&powered_by=false&search_host=www.aviasales.com%2Fsearch&locale=en&origin=LON&value_min=0&value_max=1000000&round_trip=true&only_direct=false&radius=1&draggable=true&disable_zoom=false&show_logo=false&scrollwheel=false&primary=%233FABDB&secondary=%233FABDB&light=%23ffffff&width=800&height=380&zoom=3&promo_id=4054&campaign_id=100" />
               </div>
             </div>
             <aside className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
