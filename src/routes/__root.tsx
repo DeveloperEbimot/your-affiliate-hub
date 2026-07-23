@@ -142,7 +142,7 @@ function DisclaimerModal() {
       <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl">
         <h2 className="text-lg font-bold">Before you book</h2>
         <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-          No transactions take place on this site. When you click <span className="font-semibold text-foreground">Book Now</span>, you'll be taken to a trusted booking partner (such as Booking.com, Agoda, Kiwi or GetYourGuide) where your reservation is completed securely.
+          We'll direct you to Avia sales to find the cheapest flights and accommodation, then you'll be directed to reputable sites to complete your transaction securely.
         </p>
         <button
           onClick={dismiss}
