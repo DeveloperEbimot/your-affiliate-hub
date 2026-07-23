@@ -149,7 +149,7 @@ function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2 rounded-xl overflow-hidden border border-border bg-card shadow-[var(--shadow-card)]">
               <div className="h-[320px] sm:h-[380px]">
-                <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&lat=51.5073509&lng=-0.1277583&powered_by=true&search_host=www.aviasales.com%2Fsearch&locale=en&origin=LON&value_min=0&value_max=1000000&round_trip=true&only_direct=false&radius=1&draggable=true&disable_zoom=false&show_logo=false&scrollwheel=false&primary=%233FABDB&secondary=%233FABDB&light=%23ffffff&width=800&height=380&zoom=3&promo_id=4054&campaign_id=100" />
+                <TpWidget minHeight={380} src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&lat=51.5073509&lng=-0.1277583&powered_by=false&search_host=www.aviasales.com%2Fsearch&locale=en&origin=LON&value_min=0&value_max=1000000&round_trip=true&only_direct=false&radius=1&draggable=true&disable_zoom=false&show_logo=false&scrollwheel=false&primary=%233FABDB&secondary=%233FABDB&light=%23ffffff&width=800&height=380&zoom=3&promo_id=4054&campaign_id=100" />
               </div>
             </div>
             <aside className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
