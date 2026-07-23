@@ -1,7 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, MapPin, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+function TpWidget({ src }: { src: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = "";
+    const s = document.createElement("script");
+    s.async = true;
+    s.charset = "utf-8";
+    s.src = src;
+    ref.current.appendChild(s);
+  }, [src]);
+  return <div ref={ref} className="tp-widget w-full overflow-hidden" />;
+}
 
 type Category = { id: string; name: string; slug: string };
 type Product = {
@@ -100,6 +114,23 @@ function Home() {
             />
           </div>
         </div>
+
+        {/* Flight search form */}
+        <section className="mt-6">
+          <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%2332a8dd&color_icons=%2332a8dd&dark=%23262626&light=%23ffffff&secondary=%233FABDB&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=0&plain=false&promo_id=7879&campaign_id=100" />
+        </section>
+
+        {/* Cheapest flights from London */}
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-bold">Cheapest flights from London</h2>
+          <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&color_button=%23FF0000&target_host=www.aviasales.com%2Fsearch&locale=en&powered_by=true&origin=LON&destination=BKK&with_fallback=false&non_direct_flights=true&min_lines=5&border_radius=0&color_background=%23FFFFFF&color_text=%23000000&color_border=%23FFFFFF&promo_id=2811&campaign_id=100" />
+        </section>
+
+        {/* Price map */}
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-bold">Explore prices on the map</h2>
+          <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&lat=51.5073509&lng=-0.1277583&powered_by=true&search_host=www.aviasales.com%2Fsearch&locale=en&origin=LON&value_min=0&value_max=1000000&round_trip=true&only_direct=false&radius=1&draggable=true&disable_zoom=false&show_logo=false&scrollwheel=false&primary=%233FABDB&secondary=%233FABDB&light=%23ffffff&width=1500&height=500&zoom=2&promo_id=4054&campaign_id=100" />
+        </section>
 
         {/* Categories */}
         <div className="flex flex-wrap gap-2 py-6">
