@@ -137,7 +137,7 @@ function Home() {
 
         {/* Flight search form */}
         <section className="mt-6">
-          <TpWidget src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&show_hotels=true&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%2332a8dd&color_icons=%2332a8dd&dark=%23262626&light=%23ffffff&secondary=%233FABDB&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=0&plain=false&promo_id=7879&campaign_id=100" />
+          <TpWidget minHeight={420} src="https://tpwgts.com/content?currency=usd&trs=550573&shmarker=751177&show_hotels=true&powered_by=false&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%2332a8dd&color_button=%2332a8dd&color_icons=%2332a8dd&dark=%23262626&light=%23ffffff&secondary=%233FABDB&special=%23C4C4C4&color_focused=%2332a8dd&border_radius=0&plain=false&promo_id=7879&campaign_id=100" />
         </section>
 
         {/* Explore prices on the map — compact, corner card like booking.com */}
