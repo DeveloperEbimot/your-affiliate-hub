@@ -3,19 +3,39 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, MapPin, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-function TpWidget({ src }: { src: string }) {
+function TpWidget({ src, minHeight = 300 }: { src: string; minHeight?: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!ref.current) return;
+    const el = ref.current;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setVisible(true);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!visible || !ref.current) return;
     ref.current.innerHTML = "";
     const s = document.createElement("script");
     s.async = true;
     s.charset = "utf-8";
     s.src = src;
     ref.current.appendChild(s);
-  }, [src]);
-  return <div ref={ref} className="tp-widget w-full overflow-hidden" />;
+  }, [visible, src]);
+  return <div ref={ref} className="tp-widget w-full overflow-hidden" style={{ minHeight }} />;
 }
+
 
 type Category = { id: string; name: string; slug: string };
 type Product = {
