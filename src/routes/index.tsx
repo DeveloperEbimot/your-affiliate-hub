@@ -1,7 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, MapPin, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+function TpWidget({ src }: { src: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = "";
+    const s = document.createElement("script");
+    s.async = true;
+    s.charset = "utf-8";
+    s.src = src;
+    ref.current.appendChild(s);
+  }, [src]);
+  return <div ref={ref} className="tp-widget w-full overflow-hidden" />;
+}
 
 type Category = { id: string; name: string; slug: string };
 type Product = {
